@@ -1,8 +1,5 @@
 <html>
   <head></head>
-  <body>
-    
-  </body>
   <template id="mytemplate">
     <body>
       <link
@@ -741,12 +738,34 @@
     </body>
   </template>
 
-  <array-credit-lock src="api/test-1_data.json">
+  <array-credit-lock
+    src="api/test-1_data.json"
+    showHistory="false"
+    showAll="false"
+    compactItems="4"
+  >
     <slot slot="title">Front-End Code Challenge</slot>
     <slot slot="subtitle">Array Credit Lock - Web Component</slot>
-    <slot slot="bullet-1">Building Native Web Component</slot>
-    <slot slot="bullet-2">Building Native Web Component</slot>
+    <slot slot="bullet-1">Customize content via slots</slot>
+    <slot slot="bullet-2"
+      >And component paramaters (src, showHistory, showAll, compactItems)</slot
+    >
   </array-credit-lock>
 
-  <script src="array-credit-lock.js"></script>
+  <array-single-file
+    src="api/test-1_data.json"
+    showHistory="true"
+    showAll="false"
+    compactItems="6"
+  >
+    <slot slot="title">SingleFile Test</slot>
+    <slot slot="subtitle">Array Credit Lock - Web Component</slot>
+    <slot slot="bullet-1">Customize content via slots</slot>
+    <slot slot="bullet-2"
+      >And component paramaters (src, showHistory, showAll, compactItems)</slot
+    >
+  </array-single-file>
+
+  <script src="/components/array-credit-lock.js"></script>
+  <script src="/components/array-credit-lock-singlefile.js"></script>
 </html>

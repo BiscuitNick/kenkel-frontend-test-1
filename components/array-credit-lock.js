@@ -1,3 +1,5 @@
+//Uses template from .html file
+
 function ParseDate(datestring) {
   let date = datestring.split("T")[0];
   let time = new Date(datestring).toLocaleTimeString();
@@ -5,7 +7,7 @@ function ParseDate(datestring) {
   return date + " " + time;
 }
 
-function fetchData(url) {
+async function fetchData(url) {
   return fetch(url) //, fetchOptions)
     .then((resp) => {
       if (resp.ok) {
@@ -22,15 +24,18 @@ function fetchData(url) {
     });
 }
 
+
+
 customElements.define(
   "array-credit-lock",
   class extends HTMLElement {
     constructor() {
       self = super();
       self.src = self.getAttribute("src");
-      self.showHistory = self.getAttribute("showHistory") || true;
+      self.showHistory =
+        self.getAttribute("showHistory") === "true" ? true : false;
       self.compactItems = Number(self.getAttribute("compactItems") || 4);
-      self.showAll = self.getAttribute("showAll") || false;
+      self.showAll = self.getAttribute("showAll") === "true" ? true : false;
       self.totalItems = null;
 
       const template = document.getElementById("mytemplate");

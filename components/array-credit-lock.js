@@ -1,9 +1,6 @@
-//All HTML content is contained in this file
-
 function ParseDate(datestring) {
   let date = datestring.split("T")[0];
   let time = new Date(datestring).toLocaleTimeString();
-
   return date + " " + time;
 }
 
@@ -25,7 +22,7 @@ async function fetchData(url) {
 }
 
 customElements.define(
-  "array-single-file",
+  "array-credit-lock",
   class extends HTMLElement {
     constructor() {
       self = super();
@@ -35,8 +32,6 @@ customElements.define(
       self.compactItems = Number(self.getAttribute("compactItems") || 4);
       self.showAll = self.getAttribute("showAll") === "true" ? true : false; // || false;
       self.totalItems = null;
-
-      console.log(self.showHistory, self.compactItems, self.showAll);
 
       const template = document.createElement("template");
       template.innerHTML = `<body>
@@ -802,13 +797,15 @@ customElements.define(
 
     connectedCallback() {
       const showAllElement = this.shadowRoot.getElementById("show-all");
+      showAllElement.innerText = self.showAll
+        ? "Show Fewer"
+        : `Show All (${self.totalItems})`;
       showAllElement.addEventListener(
         "click",
         () => {
+          console.log("am i running before click? ");
           let showAll = !self.showAll;
           self.showAll = showAll;
-
-          // const showAllElement = e.target;
           showAllElement.innerText = showAll
             ? "Show Fewer"
             : `Show All (${self.totalItems})`;
@@ -818,6 +815,10 @@ customElements.define(
       );
 
       const lockHistory = this.shadowRoot.getElementById("lock-history");
+      showAllElement.style.display = self.showHistory ? "block" : "none";
+      lockHistory.innerText = self.showHistory
+        ? "Hide lock history"
+        : "Show lock history";
       lockHistory.addEventListener(
         "click",
         () => {
@@ -826,8 +827,9 @@ customElements.define(
           lockHistory.innerText = showHistory
             ? "Hide lock history"
             : "Show lock history";
-
           showAllElement.style.display = showHistory ? "block" : "none";
+          console.log("831", showAllElement);
+
           this.populateListData();
         },
         false
@@ -841,15 +843,21 @@ customElements.define(
       }
 
       const src = self.src;
-      fetchData(src).then((data) => {
-        const totalItems = data.length;
-        self.totalItems = totalItems;
-        showAllElement.innerText = `Show All (${totalItems})`;
 
-        self.data = data;
+      if (!src) {
+        self.data = [];
+        this.populateListData();
+      } else {
+        fetchData(src).then((data) => {
+          const totalItems = data.length;
+          self.totalItems = totalItems;
+          showAllElement.innerText = `Show All (${totalItems})`;
 
-        this.populateListData(self);
-      });
+          self.data = data;
+
+          this.populateListData();
+        });
+      }
     }
 
     populateListData() {
@@ -858,6 +866,17 @@ customElements.define(
 
       lockHistoryList.innerHTML = "";
 
+      console.log(self.src);
+      console.log(self.data);
+
+      if (!self.src) {
+        lockHistoryList.innerHTML = "Error: No src";
+      } else if (self.data.error || !self.data) {
+        console.log(self.data);
+        lockHistoryList.innerHTML = `Error: Fetch Error. Check path ${self.src}`;
+      } else {
+      }
+
       const data = self.data;
       const showHistory = self.showHistory;
       const showAll = self.showAll;
@@ -865,7 +884,9 @@ customElements.define(
 
       if (showHistory) {
         let total = showAll ? data.length : compactItems;
-        for (let i = 0; i < total; i++) {
+        // for (let i = 0; i < total; i++) {
+        // Iterate in reverse order. Most recent dates are more relavant.
+        for (let i = total - 1; i >= 0; i--) {
           let content = data[i];
           let { date, type } = content;
           let statusText = type === "enrollment" ? "Locked" : "Unlocked";

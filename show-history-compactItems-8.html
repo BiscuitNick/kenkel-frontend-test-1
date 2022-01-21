@@ -1,20 +1,15 @@
 <html>
   <array-credit-lock
     src="api/test-1_data.json"
-    showHistory="false"
+    showHistory="true"
     showAll="false"
-    compactItems="4"
+    compactItems="8"
   >
     <slot slot="title">Front End Code Challenge</slot>
     <slot slot="subtitle">Array Credit Lock - Web Component</slot>
-    <slot slot="bullet-1">Dynamic content via slots & Element Properties</slot>
+    <slot slot="bullet-1">8 Compact Items example</slot>
     <slot slot="bullet-2"
-      ><div>
-        <a href="/examples">Examples</a>
-      </div>
-      <div>
-        <a href="/examples">Source Code</a>
-      </div></slot
+      >Should show 8 items in compactView (compactItems=8, showAll=false)</slot
     >
   </array-credit-lock>
 
